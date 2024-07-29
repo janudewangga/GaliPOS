@@ -4,6 +4,7 @@
  */
 package xyz.galinfo.galipos.panels;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
@@ -55,7 +56,6 @@ public class PanelPenjualan extends javax.swing.JPanel {
     jLabel4 = new javax.swing.JLabel();
     jTextField3 = new javax.swing.JTextField();
     jLabel5 = new javax.swing.JLabel();
-    jTextField4 = new javax.swing.JTextField();
     jLabel6 = new javax.swing.JLabel();
     jTextField5 = new javax.swing.JTextField();
     jButton2 = new javax.swing.JButton();
@@ -64,6 +64,7 @@ public class PanelPenjualan extends javax.swing.JPanel {
     cmbPenjualanBuyer = new javax.swing.JComboBox<>();
     jLabel9 = new javax.swing.JLabel();
     txtPenjualanBuyerNama = new javax.swing.JTextField();
+    jFormattedTextField1 = new javax.swing.JFormattedTextField();
     jPanel3 = new javax.swing.JPanel();
     jLabel7 = new javax.swing.JLabel();
     txtPenjualanKodeProduk = new javax.swing.JTextField();
@@ -113,25 +114,33 @@ public class PanelPenjualan extends javax.swing.JPanel {
     jLabel4.setText("Total");
     jPanel2.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 210, -1, -1));
 
-    jTextField3.setEnabled(false);
+    jTextField3.setEditable(false);
+    jTextField3.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+    jTextField3.setForeground(new java.awt.Color(0, 102, 153));
     jPanel2.add(jTextField3, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 230, 240, -1));
 
     jLabel5.setText("Dibayar");
-    jPanel2.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 260, -1, -1));
-    jPanel2.add(jTextField4, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 280, 240, -1));
+    jPanel2.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 270, -1, -1));
 
     jLabel6.setText("Kembali");
-    jPanel2.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 310, -1, -1));
+    jPanel2.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 330, -1, -1));
 
-    jTextField5.setEnabled(false);
-    jPanel2.add(jTextField5, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 330, 240, -1));
+    jTextField5.setEditable(false);
+    jTextField5.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+    jTextField5.setForeground(new java.awt.Color(0, 153, 51));
+    jPanel2.add(jTextField5, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 350, 240, -1));
 
     jButton2.setText("Batal");
     jButton2.setEnabled(false);
-    jPanel2.add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 360, -1, -1));
+    jButton2.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        jButton2ActionPerformed(evt);
+      }
+    });
+    jPanel2.add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 390, -1, -1));
 
     jButton3.setText("Simpan");
-    jPanel2.add(jButton3, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 360, -1, -1));
+    jPanel2.add(jButton3, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 390, -1, -1));
 
     jLabel8.setText("Buyer");
     jPanel2.add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, -1, -1));
@@ -146,6 +155,20 @@ public class PanelPenjualan extends javax.swing.JPanel {
     jLabel9.setText("Nama");
     jPanel2.add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 60, -1, -1));
     jPanel2.add(txtPenjualanBuyerNama, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 80, 240, -1));
+
+    jFormattedTextField1.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0.00"))));
+    jFormattedTextField1.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+    jFormattedTextField1.addFocusListener(new java.awt.event.FocusAdapter() {
+      public void focusLost(java.awt.event.FocusEvent evt) {
+        jFormattedTextField1FocusLost(evt);
+      }
+    });
+    jFormattedTextField1.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        jFormattedTextField1ActionPerformed(evt);
+      }
+    });
+    jPanel2.add(jFormattedTextField1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 290, 240, -1));
 
     jLabel7.setText("Kode produk");
 
@@ -316,6 +339,43 @@ private ArrayList<ItemTransaksi> itemTransaksis = new ArrayList<>();
       txtPenjualanBuyerNama.setEnabled(true);
     }
   }//GEN-LAST:event_cmbPenjualanBuyerActionPerformed
+
+  private void jFormattedTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jFormattedTextField1ActionPerformed
+    // TODO add your handling code here:
+    hitungKembalian();
+  }//GEN-LAST:event_jFormattedTextField1ActionPerformed
+
+  private void jFormattedTextField1FocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jFormattedTextField1FocusLost
+    // TODO add your handling code here:
+    hitungKembalian();
+  }//GEN-LAST:event_jFormattedTextField1FocusLost
+
+  private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+    // TODO add your handling code here:
+    int dialogOptions = JOptionPane.YES_NO_OPTION;
+    int dialogResult = JOptionPane.showConfirmDialog(this, "Apakah Anda yakin ingin membatalkan transaksi ini?", "Batalkan transaksi", dialogOptions);
+    if (dialogResult == JOptionPane.YES_OPTION) {
+      itemTransaksis.clear();
+      reloadItemData();
+      txtPenjualanBuyerNama.setText(null);
+      cmbPenjualanBuyer.setSelectedIndex(0);
+    }
+  }//GEN-LAST:event_jButton2ActionPerformed
+  private void hitungKembalian() {
+    if (jFormattedTextField1.getText().length() > 0) {
+      Double result;
+      Double total = Double.valueOf(jTextField3.getText());
+      Double dibayar = Double.valueOf(jFormattedTextField1.getText());
+      result = dibayar - total;
+      if (result < 0) {
+        jTextField5.setForeground(Color.red);
+      } else {
+        jTextField5.setForeground(new Color(0, 153, 51));
+      }
+      jTextField5.setText(result + "");
+    }
+  }
+
   private void addItem() {
     String kode = txtPenjualanKodeProduk.getText();
     Produk produk = Produk.getByKode(kode, 0);
@@ -348,6 +408,7 @@ private ArrayList<ItemTransaksi> itemTransaksis = new ArrayList<>();
 
   private void reloadItemData() {
     DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+    Double totalPriceBeforeDiscount = 0.00;
     model.setRowCount(0);
     for (ItemTransaksi item : itemTransaksis) {
       model.addRow(new Object[]{
@@ -357,6 +418,20 @@ private ArrayList<ItemTransaksi> itemTransaksis = new ArrayList<>();
         item.getJumlah(),
         item.getTotal()
       });
+      totalPriceBeforeDiscount += item.getTotal();
+    }
+    Double diskon = 0.00;
+    Double totalPriceAfterDiscount = totalPriceBeforeDiscount - diskon;
+    jTextField1.setText(totalPriceBeforeDiscount + "");
+    jTextField2.setText(diskon + "");
+    jTextField3.setText(totalPriceAfterDiscount + "");
+    if (model.getRowCount() > 0) {
+      jButton2.setEnabled(true);
+      hitungKembalian();
+    } else {
+      jButton2.setEnabled(false);
+      jFormattedTextField1.setText(null);
+      jTextField5.setText(null);
     }
   }
   // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -365,6 +440,7 @@ private ArrayList<ItemTransaksi> itemTransaksis = new ArrayList<>();
   private javax.swing.JButton jButton2;
   private javax.swing.JButton jButton3;
   private javax.swing.JButton jButton4;
+  private javax.swing.JFormattedTextField jFormattedTextField1;
   private javax.swing.JLabel jLabel1;
   private javax.swing.JLabel jLabel2;
   private javax.swing.JLabel jLabel3;
@@ -382,7 +458,6 @@ private ArrayList<ItemTransaksi> itemTransaksis = new ArrayList<>();
   private javax.swing.JTextField jTextField1;
   private javax.swing.JTextField jTextField2;
   private javax.swing.JTextField jTextField3;
-  private javax.swing.JTextField jTextField4;
   private javax.swing.JTextField jTextField5;
   private javax.swing.JTextField txtPenjualanBuyerNama;
   private javax.swing.JTextField txtPenjualanKodeProduk;

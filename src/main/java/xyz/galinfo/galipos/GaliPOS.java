@@ -40,7 +40,7 @@ public class GaliPOS {
         break;
       }
     }
-    initData();
+//    initData();
 //    FMasuk fMasuk = new FMasuk();
 //    fMasuk.setVisible(true);
     sessionUser = User.getByUsername("admin", 0);
