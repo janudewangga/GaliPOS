@@ -8,9 +8,11 @@ import java.awt.Color;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import xyz.galinfo.galipos.GaliPOS;
 import xyz.galinfo.galipos.models.CmbItem;
 import xyz.galinfo.galipos.models.ItemTransaksi;
 import xyz.galinfo.galipos.models.Produk;
+import xyz.galinfo.galipos.models.Transaksi;
 import xyz.galinfo.galipos.models.User;
 
 /**
@@ -140,6 +142,12 @@ public class PanelPenjualan extends javax.swing.JPanel {
     jPanel2.add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 390, -1, -1));
 
     jButton3.setText("Simpan");
+    jButton3.setEnabled(false);
+    jButton3.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        jButton3ActionPerformed(evt);
+      }
+    });
     jPanel2.add(jButton3, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 390, -1, -1));
 
     jLabel8.setText("Buyer");
@@ -361,6 +369,68 @@ private ArrayList<ItemTransaksi> itemTransaksis = new ArrayList<>();
       cmbPenjualanBuyer.setSelectedIndex(0);
     }
   }//GEN-LAST:event_jButton2ActionPerformed
+
+  private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+    // TODO add your handling code here:
+    int idBuyer = Integer.parseInt(cmbPenjualanBuyer.getItemAt(cmbPenjualanBuyer.getSelectedIndex()).getId());
+    String timestamp = GaliPOS.getTimeStamp(1, null);
+    String jumlah = jTextField1.getText();
+    String diskon = jTextField2.getText();
+    String grandTotal = jTextField3.getText();
+    String dibayar = jFormattedTextField1.getText();
+    String kembali = jTextField5.getText();
+    Double dJumlah = 0.00, dDiskon = 0.00, dGrandTotal = 0.00, dDibayar = 0.00, dKembali = 0.00;
+    boolean isValid = true;
+    if (jumlah.length() == 0) {
+      isValid = false;
+      JOptionPane.showMessageDialog(this, "Jumlah harus diisi.", "Input salah", 0);
+    } else if (diskon.length() == 0) {
+      isValid = false;
+      JOptionPane.showMessageDialog(this, "Diskon harus diisi.", "Input salah", 0);
+    } else if (grandTotal.length() == 0) {
+      isValid = false;
+      JOptionPane.showMessageDialog(this, "Grand total harus diisi.", "Input salah", 0);
+    } else if (dibayar.length() == 0) {
+      isValid = false;
+      JOptionPane.showMessageDialog(this, "Jumlah dibayar harus diisi.", "Input salah", 0);
+    } else if (kembali.length() == 0) {
+      isValid = false;
+      JOptionPane.showMessageDialog(this, "Kembalian harus diisi.", "Input salah", 0);
+    } else {
+      try {
+        dJumlah = Double.valueOf(jumlah);
+        dDiskon = Double.valueOf(diskon);
+        dGrandTotal = Double.valueOf(grandTotal);
+        dDibayar = Double.valueOf(dibayar);
+        dKembali = Double.valueOf(kembali);
+      } catch (NumberFormatException e) {
+        isValid = false;
+        JOptionPane.showMessageDialog(this, e.getMessage(), "Input salah", 0);
+      }
+    }
+    if (isValid) {
+      boolean simpanPiutang = false;
+      boolean simpanHutang = false;
+      if (dDibayar < dGrandTotal) {
+        int dialogOptions = JOptionPane.YES_NO_OPTION;
+        int dialogResult = JOptionPane.showConfirmDialog(this, "Pembayaran kurang dari jumlah total. Apakah akan disimpan sebagai piutang?", "Pembayaran", dialogOptions);
+        if (dialogResult == JOptionPane.YES_OPTION) {
+          simpanPiutang = true;
+        }
+      }
+//      if (dDibayar > dGrandTotal) {
+//        int dialogOptions = JOptionPane.YES_NO_OPTION;
+//        int dialogResult = JOptionPane.showConfirmDialog(this, "Kembalian " + (dDibayar - dGrandTotal) + " apakah sudah diberikan?", "Pembayaran", dialogOptions);
+//        if (dialogResult == JOptionPane.YES_OPTION) {
+//          System.out.println("OK");
+//        }
+//      }
+      Transaksi transaksi = new Transaksi(timestamp, GaliPOS.sessionUser.getId(), idBuyer, 0, dJumlah, dDiskon, dGrandTotal, dDibayar, itemTransaksis, null, "paid");
+      if(transaksi.save()!=null)  {
+        
+      }
+    }
+  }//GEN-LAST:event_jButton3ActionPerformed
   private void hitungKembalian() {
     if (jFormattedTextField1.getText().length() > 0) {
       Double result;
@@ -427,6 +497,7 @@ private ArrayList<ItemTransaksi> itemTransaksis = new ArrayList<>();
     jTextField3.setText(totalPriceAfterDiscount + "");
     if (model.getRowCount() > 0) {
       jButton2.setEnabled(true);
+      jButton3.setEnabled(true);
       hitungKembalian();
     } else {
       jButton2.setEnabled(false);

@@ -5,6 +5,7 @@
 package xyz.galinfo.galipos.models;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import xyz.galinfo.galipos.Database;
@@ -25,6 +26,7 @@ public class Transaksi {
   private double diskon;
   private double grandTotal;
   private double terbayar;
+  private ArrayList<ItemTransaksi> items;
   private String keterangan;
   private String status;
   private String createdAt;
@@ -39,6 +41,20 @@ public class Transaksi {
     this.diskon = diskon;
     this.grandTotal = grandTotal;
     this.terbayar = terbayar;
+    this.keterangan = keterangan;
+    this.status = status;
+  }
+
+  public Transaksi(String waktu, int idOperator, int idBuyer, int idSupplier, double total, double diskon, double grandTotal, double terbayar, ArrayList<ItemTransaksi> items, String keterangan, String status) {
+    this.waktu = waktu;
+    this.idOperator = idOperator;
+    this.idBuyer = idBuyer;
+    this.idSupplier = idSupplier;
+    this.total = total;
+    this.diskon = diskon;
+    this.grandTotal = grandTotal;
+    this.terbayar = terbayar;
+    this.items = items;
     this.keterangan = keterangan;
     this.status = status;
   }
@@ -58,6 +74,14 @@ public class Transaksi {
     this.status = status;
     this.createdAt = createdAt;
     this.updatedAt = updatedAt;
+  }
+
+  public ArrayList<ItemTransaksi> getItems() {
+    return items;
+  }
+
+  public void setItems(ArrayList<ItemTransaksi> items) {
+    this.items = items;
   }
 
   public int getIdSupplier() {
@@ -205,5 +229,10 @@ public class Transaksi {
     } catch (SQLException ex) {
       Logger.getLogger(User.class.getName()).log(Level.SEVERE, null, ex);
     }
+  }
+
+  public Transaksi save() {
+    Transaksi transaksi = null;
+    return transaksi;
   }
 }
