@@ -4,11 +4,17 @@
  */
 package xyz.galinfo.galipos.models;
 
+import com.google.gson.Gson;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import xyz.galinfo.galipos.Database;
+import xyz.galinfo.galipos.GaliPOS;
 
 /**
  *
@@ -17,6 +23,7 @@ import xyz.galinfo.galipos.Database;
 public class Transaksi {
 
   private long id;
+  private String tipe;
   private String kode;
   private String waktu;
   private int idOperator;
@@ -32,7 +39,8 @@ public class Transaksi {
   private String createdAt;
   private String updatedAt;
 
-  public Transaksi(String waktu, int idOperator, int idBuyer, int idSupplier, double total, double diskon, double grandTotal, double terbayar, String keterangan, String status) {
+  public Transaksi(String tipe, String waktu, int idOperator, int idBuyer, int idSupplier, double total, double diskon, double grandTotal, double terbayar, String keterangan, String status) {
+    this.tipe = tipe;
     this.waktu = waktu;
     this.idOperator = idOperator;
     this.idBuyer = idBuyer;
@@ -45,7 +53,8 @@ public class Transaksi {
     this.status = status;
   }
 
-  public Transaksi(String waktu, int idOperator, int idBuyer, int idSupplier, double total, double diskon, double grandTotal, double terbayar, ArrayList<ItemTransaksi> items, String keterangan, String status) {
+  public Transaksi(String tipe, String waktu, int idOperator, int idBuyer, int idSupplier, double total, double diskon, double grandTotal, double terbayar, ArrayList<ItemTransaksi> items, String keterangan, String status) {
+    this.tipe = tipe;
     this.waktu = waktu;
     this.idOperator = idOperator;
     this.idBuyer = idBuyer;
@@ -196,6 +205,14 @@ public class Transaksi {
     this.updatedAt = updatedAt;
   }
 
+  public String getTipe() {
+    return tipe;
+  }
+
+  public void setTipe(String tipe) {
+    this.tipe = tipe;
+  }
+
   @Override
   public String toString() {
     return "Transaksi{" + "id=" + id + ", kode=" + kode + ", waktu=" + waktu + ", idOperator=" + idOperator + ", idBuyer=" + idBuyer + ", idSupplier=" + idSupplier + ", amount=" + total + ", discount=" + diskon + ", total=" + grandTotal + ", paid=" + terbayar + ", keterangan=" + keterangan + ", status=" + status + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + '}';
@@ -215,6 +232,7 @@ public class Transaksi {
             + "diskon real not null default 0,"
             + "grand_total real not null default 0,"
             + "terbayar real not null default 0,"
+            + "keterangan text null default null,"
             + "status text not null default 'unpaid',"
             + "created_at text not null,"
             + "updated_at text not null,"
@@ -231,8 +249,59 @@ public class Transaksi {
     }
   }
 
+  public static Transaksi rsProcessor(ResultSet rs) {
+    Transaksi transaksi = null;
+    try {
+      transaksi = new Transaksi(rs.getLong("id"), rs.getString("kode"), rs.getString("waktu"), rs.getInt("id_operator"), rs.getInt("id_buyer"), rs.getInt("id_supplier"), rs.getDouble("total"), rs.getDouble("diskon"), rs.getDouble("grand_total"), rs.getDouble("terbayar"), rs.getString("keterangan"), rs.getString("status"), rs.getString("created_at"), rs.getString("updated_at"));
+    } catch (SQLException ex) {
+      Logger.getLogger(Produk.class.getName()).log(Level.SEVERE, null, ex);
+    }
+    return transaksi;
+  }
+
   public Transaksi save() {
     Transaksi transaksi = null;
+    String timestamp = GaliPOS.getTimeStamp(1, null);
+    Database db = new Database();
+    String sql = "insert into transaksi(tipe,waktu,id_operator,id_buyer,id_supplier,total,diskon,grand_total,terbayar,status,created_at,updated_at) "
+            + "values(?,?,?,?,?,?,?,?,?,?,?,?)";
+    try {
+      PreparedStatement pstmt = db.connection.prepareStatement(sql);
+      pstmt.setString(1, this.getTipe());
+      pstmt.setString(2, this.getWaktu());
+      pstmt.setInt(3, this.getIdOperator());
+      if (this.getIdBuyer() > 0) {
+        pstmt.setInt(4, this.getIdBuyer());
+      } else {
+        pstmt.setNull(4, Types.INTEGER);
+      }
+      if (this.getIdSupplier() > 0) {
+        pstmt.setInt(5, this.getIdSupplier());
+      } else {
+        pstmt.setNull(5, Types.INTEGER);
+      }
+      pstmt.setDouble(6, this.getTotal());
+      pstmt.setDouble(7, this.getDiskon());
+      pstmt.setDouble(8, this.getGrandTotal());
+      pstmt.setDouble(9, this.getTerbayar());
+      pstmt.setString(10, this.getStatus());
+      pstmt.setString(11, timestamp);
+      pstmt.setString(12, timestamp);
+      if (pstmt.executeUpdate() > 0) {
+        ResultSet rs = db.connection.createStatement().executeQuery("select * from transaksi order by id desc limit 1");
+        if (rs.next()) {
+          transaksi = rsProcessor(rs);
+          String kode = "TRX" + (new Random().nextInt(999 - 111 + 1) + 111) + String.format("%04d", rs.getInt("id"));
+          transaksi.setKode(kode);
+          db.connection.createStatement().executeUpdate("update transaksi set kode='" + kode + "' where id=" + rs.getInt("id"));
+          Log log = new Log(GaliPOS.sessionUser.getId(), "create", null, "transaksi", rs.getInt("id") + "", new Gson().toJson(transaksi), "sukses");
+          log.save(db.connection);
+        }
+      }
+      db.connection.close();
+    } catch (SQLException ex) {
+      Logger.getLogger(Transaksi.class.getName()).log(Level.SEVERE, null, ex);
+    }
     return transaksi;
   }
 }

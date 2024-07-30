@@ -425,9 +425,11 @@ private ArrayList<ItemTransaksi> itemTransaksis = new ArrayList<>();
 //          System.out.println("OK");
 //        }
 //      }
-      Transaksi transaksi = new Transaksi(timestamp, GaliPOS.sessionUser.getId(), idBuyer, 0, dJumlah, dDiskon, dGrandTotal, dDibayar, itemTransaksis, null, "paid");
-      if(transaksi.save()!=null)  {
-        
+      Transaksi transaksi = new Transaksi("jual", timestamp, GaliPOS.sessionUser.getId(), idBuyer, 0, dJumlah, dDiskon, dGrandTotal, dDibayar, itemTransaksis, null, "paid");
+      if (transaksi.save() != null) {
+        JOptionPane.showMessageDialog(this, "Transaksi berhasil disimpan.", "Tambah penjualan", 1);
+      } else {
+        JOptionPane.showMessageDialog(this, "Transaksi gagal disimpan.", "Tambah penjualan", 0);
       }
     }
   }//GEN-LAST:event_jButton3ActionPerformed
