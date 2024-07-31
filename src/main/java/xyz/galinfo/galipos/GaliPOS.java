@@ -54,6 +54,9 @@ public class GaliPOS {
       case 1:
         result = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
         break;
+      case 2:
+        result = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+        break;
       default:
         throw new AssertionError();
     }

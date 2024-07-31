@@ -37,6 +37,7 @@ public class PanelPenjualan extends javax.swing.JPanel {
     for (User user : users) {
       cmbPenjualanBuyer.addItem(new CmbItem(user.getId() + "", user.getNama()));
     }
+    loadTransaksi(GaliPOS.getTimeStamp(2, null), GaliPOS.getTimeStamp(2, null));
   }
 
   /**
@@ -74,6 +75,8 @@ public class PanelPenjualan extends javax.swing.JPanel {
     jScrollPane1 = new javax.swing.JScrollPane();
     jTable1 = new javax.swing.JTable();
     jButton4 = new javax.swing.JButton();
+    jScrollPane2 = new javax.swing.JScrollPane();
+    jTable2 = new javax.swing.JTable();
 
     jPanel1.setBackground(new java.awt.Color(0, 102, 153));
 
@@ -261,6 +264,33 @@ public class PanelPenjualan extends javax.swing.JPanel {
       }
     });
 
+    jTable2.setAutoCreateRowSorter(true);
+    jTable2.setModel(new javax.swing.table.DefaultTableModel(
+      new Object [][] {
+
+      },
+      new String [] {
+        "ID", "Waktu", "Buyer", "Total", "Status"
+      }
+    ) {
+      Class[] types = new Class [] {
+        java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Double.class, java.lang.String.class
+      };
+      boolean[] canEdit = new boolean [] {
+        false, false, false, false, false
+      };
+
+      public Class getColumnClass(int columnIndex) {
+        return types [columnIndex];
+      }
+
+      public boolean isCellEditable(int rowIndex, int columnIndex) {
+        return canEdit [columnIndex];
+      }
+    });
+    jTable2.getTableHeader().setReorderingAllowed(false);
+    jScrollPane2.setViewportView(jTable2);
+
     javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
     this.setLayout(layout);
     layout.setHorizontalGroup(
@@ -276,7 +306,8 @@ public class PanelPenjualan extends javax.swing.JPanel {
               .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 528, Short.MAX_VALUE)
               .addGroup(layout.createSequentialGroup()
                 .addComponent(jButton4)
-                .addGap(0, 0, Short.MAX_VALUE)))
+                .addGap(0, 0, Short.MAX_VALUE))
+              .addComponent(jScrollPane2))
             .addContainerGap())))
     );
     layout.setVerticalGroup(
@@ -292,10 +323,26 @@ public class PanelPenjualan extends javax.swing.JPanel {
             .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
             .addComponent(jButton4)
-            .addGap(0, 0, Short.MAX_VALUE))))
+            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+            .addContainerGap())))
     );
   }// </editor-fold>//GEN-END:initComponents
-private ArrayList<ItemTransaksi> itemTransaksis = new ArrayList<>();
+private void loadTransaksi(String tanggal1, String tanggal2) {
+    ArrayList<Transaksi> transaksis = Transaksi.getByTanggal(tanggal1, tanggal2);
+    DefaultTableModel model = (DefaultTableModel) jTable2.getModel();
+    model.setRowCount(0);
+    for (Transaksi transaksi : transaksis) {
+      model.addRow(new Object[]{
+        transaksi.getKode(),
+        transaksi.getWaktu(),
+        transaksi.getIdBuyer(),
+        transaksi.getTotal(),
+        transaksi.getStatus()
+      });
+    }
+  }
+  private ArrayList<ItemTransaksi> itemTransaksis = new ArrayList<>();
   private void txtPenjualanKodeProdukActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtPenjualanKodeProdukActionPerformed
     // TODO add your handling code here:
     jButton1.doClick();
@@ -411,28 +458,49 @@ private ArrayList<ItemTransaksi> itemTransaksis = new ArrayList<>();
     if (isValid) {
       boolean simpanPiutang = false;
       boolean simpanHutang = false;
+      Double terbayar = 0.00;
       if (dDibayar < dGrandTotal) {
         int dialogOptions = JOptionPane.YES_NO_OPTION;
         int dialogResult = JOptionPane.showConfirmDialog(this, "Pembayaran kurang dari jumlah total. Apakah akan disimpan sebagai piutang?", "Pembayaran", dialogOptions);
         if (dialogResult == JOptionPane.YES_OPTION) {
           simpanPiutang = true;
+          terbayar = dDibayar;
         }
       }
-//      if (dDibayar > dGrandTotal) {
+      if (dDibayar > dGrandTotal) {
 //        int dialogOptions = JOptionPane.YES_NO_OPTION;
 //        int dialogResult = JOptionPane.showConfirmDialog(this, "Kembalian " + (dDibayar - dGrandTotal) + " apakah sudah diberikan?", "Pembayaran", dialogOptions);
 //        if (dialogResult == JOptionPane.YES_OPTION) {
 //          System.out.println("OK");
 //        }
-//      }
-      Transaksi transaksi = new Transaksi("jual", timestamp, GaliPOS.sessionUser.getId(), idBuyer, 0, dJumlah, dDiskon, dGrandTotal, dDibayar, itemTransaksis, null, "paid");
+        terbayar = dGrandTotal;
+      }
+      Transaksi transaksi = new Transaksi("jual", timestamp, GaliPOS.sessionUser.getId(), idBuyer, 0, dJumlah, dDiskon, dGrandTotal, terbayar, itemTransaksis, null, "paid");
       if (transaksi.save() != null) {
         JOptionPane.showMessageDialog(this, "Transaksi berhasil disimpan.", "Tambah penjualan", 1);
+        resetForm();
       } else {
         JOptionPane.showMessageDialog(this, "Transaksi gagal disimpan.", "Tambah penjualan", 0);
       }
     }
   }//GEN-LAST:event_jButton3ActionPerformed
+  private void resetForm() {
+    itemTransaksis.clear();
+    cmbPenjualanBuyer.setSelectedIndex(0);
+    txtPenjualanBuyerNama.setText(null);
+    txtPenjualanBuyerNama.setEnabled(true);
+    jTextField1.setText(null);
+    jTextField2.setText(null);
+    jTextField3.setText(null);
+    jFormattedTextField1.setText(null);
+    jTextField5.setText(null);
+    jButton2.setEnabled(false);
+    jButton3.setEnabled(false);
+    jButton4.setEnabled(false);
+    DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+    model.setRowCount(0);
+  }
+
   private void hitungKembalian() {
     if (jFormattedTextField1.getText().length() > 0) {
       Double result;
@@ -527,7 +595,9 @@ private ArrayList<ItemTransaksi> itemTransaksis = new ArrayList<>();
   private javax.swing.JPanel jPanel2;
   private javax.swing.JPanel jPanel3;
   private javax.swing.JScrollPane jScrollPane1;
+  private javax.swing.JScrollPane jScrollPane2;
   private javax.swing.JTable jTable1;
+  private javax.swing.JTable jTable2;
   private javax.swing.JTextField jTextField1;
   private javax.swing.JTextField jTextField2;
   private javax.swing.JTextField jTextField3;

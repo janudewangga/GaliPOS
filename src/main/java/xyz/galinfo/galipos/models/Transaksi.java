@@ -218,6 +218,22 @@ public class Transaksi {
     return "Transaksi{" + "id=" + id + ", kode=" + kode + ", waktu=" + waktu + ", idOperator=" + idOperator + ", idBuyer=" + idBuyer + ", idSupplier=" + idSupplier + ", amount=" + total + ", discount=" + diskon + ", total=" + grandTotal + ", paid=" + terbayar + ", keterangan=" + keterangan + ", status=" + status + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + '}';
   }
 
+  public static ArrayList<Transaksi> getByTanggal(String tanggal1, String tanggal2) {
+    ArrayList<Transaksi> transaksis = new ArrayList<>();
+    Database db = new Database();
+    String sql = "select tr.* from transaksi tr where tr.waktu>='" + tanggal1 + " 00:00:00' and tr.waktu<='" + tanggal2 + " 23:59:59' order by tr.waktu asc";
+    try {
+      ResultSet rs = db.connection.createStatement().executeQuery(sql);
+      while (rs.next()) {
+        transaksis.add(rsProcessor(rs));
+      }
+      db.connection.close();
+    } catch (SQLException ex) {
+      Logger.getLogger(Transaksi.class.getName()).log(Level.SEVERE, null, ex);
+    }
+    return transaksis;
+  }
+
   public static void initTable() {
     Database db = new Database();
     String sql = "create table if not exists transaksi("
@@ -291,9 +307,17 @@ public class Transaksi {
         ResultSet rs = db.connection.createStatement().executeQuery("select * from transaksi order by id desc limit 1");
         if (rs.next()) {
           transaksi = rsProcessor(rs);
-          String kode = "TRX" + (new Random().nextInt(999 - 111 + 1) + 111) + String.format("%04d", rs.getInt("id"));
-          transaksi.setKode(kode);
-          db.connection.createStatement().executeUpdate("update transaksi set kode='" + kode + "' where id=" + rs.getInt("id"));
+          String newKode = "TRX" + (new Random().nextInt(999 - 111 + 1) + 111) + String.format("%04d", rs.getInt("id"));
+          transaksi.setKode(newKode);
+          db.connection.createStatement().executeUpdate("update transaksi set kode='" + newKode + "' where id=" + rs.getInt("id"));
+          int iterator1 = 1;
+          for (ItemTransaksi item : items) {
+//            System.out.println(item.toString());
+            item.setIdTransaksi(transaksi.getId());
+            item.setKode(newKode + String.format("%03d", iterator1));
+            item.save(db.connection);
+            iterator1++;
+          }
           Log log = new Log(GaliPOS.sessionUser.getId(), "create", null, "transaksi", rs.getInt("id") + "", new Gson().toJson(transaksi), "sukses");
           log.save(db.connection);
         }

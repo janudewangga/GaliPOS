@@ -4,10 +4,14 @@
  */
 package xyz.galinfo.galipos.models;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import xyz.galinfo.galipos.Database;
+import xyz.galinfo.galipos.GaliPOS;
 
 /**
  *
@@ -16,6 +20,7 @@ import xyz.galinfo.galipos.Database;
 public class ItemTransaksi {
 
   private long id;
+  private long idTransaksi;
   private String kode;
   private String kodeProduk;
   private String namaProduk;
@@ -39,7 +44,8 @@ public class ItemTransaksi {
     this.grandTotal = grandTotal;
   }
 
-  public ItemTransaksi(String kode, int idProduk, double jumlah, double harga, double total, double diskonItem, double grandTotal) {
+  public ItemTransaksi(long idTransaksi, String kode, int idProduk, double jumlah, double harga, double total, double diskonItem, double grandTotal) {
+    this.idTransaksi = idTransaksi;
     this.kode = kode;
     this.idProduk = idProduk;
     this.jumlah = jumlah;
@@ -49,8 +55,9 @@ public class ItemTransaksi {
     this.grandTotal = grandTotal;
   }
 
-  public ItemTransaksi(long id, String kode, int idProduk, double jumlah, double harga, double total, double diskonItem, double grandTotal, String createdAt, String updatedAt) {
+  public ItemTransaksi(long id, long idTransaksi, String kode, int idProduk, double jumlah, double harga, double total, double diskonItem, double grandTotal, String createdAt, String updatedAt) {
     this.id = id;
+    this.idTransaksi = idTransaksi;
     this.kode = kode;
     this.idProduk = idProduk;
     this.jumlah = jumlah;
@@ -158,9 +165,17 @@ public class ItemTransaksi {
     this.updatedAt = updatedAt;
   }
 
+  public long getIdTransaksi() {
+    return idTransaksi;
+  }
+
+  public void setIdTransaksi(long idTransaksi) {
+    this.idTransaksi = idTransaksi;
+  }
+
   @Override
   public String toString() {
-    return "ItemTransaksi{" + "id=" + id + ", kode=" + kode + ", idProduk=" + idProduk + ", jumlah=" + jumlah + ", harga=" + harga + ", total=" + total + ", diskonItem=" + diskonItem + ", grandTotal=" + grandTotal + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + '}';
+    return "ItemTransaksi{" + "id=" + id + ", idTransaksi=" + idTransaksi + ", kode=" + kode + ", kodeProduk=" + kodeProduk + ", namaProduk=" + namaProduk + ", idProduk=" + idProduk + ", jumlah=" + jumlah + ", harga=" + harga + ", total=" + total + ", diskonItem=" + diskonItem + ", grandTotal=" + grandTotal + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + '}';
   }
 
   public static void initTable() {
@@ -187,5 +202,47 @@ public class ItemTransaksi {
     } catch (SQLException ex) {
       Logger.getLogger(User.class.getName()).log(Level.SEVERE, null, ex);
     }
+  }
+
+  public ItemTransaksi rsProcessor(ResultSet rs) {
+    try {
+      return new ItemTransaksi(rs.getLong("id"), rs.getLong("id_transaksi"), rs.getString("kode"), rs.getInt("id_produk"), rs.getDouble("jumlah"), rs.getDouble("harga"), rs.getDouble("total"), rs.getDouble("diskon_item"), rs.getDouble("grand_total"), rs.getString("created_at"), rs.getString("updated_at"));
+    } catch (SQLException ex) {
+      Logger.getLogger(ItemTransaksi.class.getName()).log(Level.SEVERE, null, ex);
+    }
+    return null;
+  }
+
+  public ItemTransaksi save(Connection dbConn) {
+    ItemTransaksi itemTransaksi = null;
+    if (dbConn == null) {
+      Database db = new Database();
+      dbConn = db.connection;
+    }
+    String sql = "insert into item_transaksi(id_transaksi,kode,id_produk,jumlah,harga,total,diskon_item,grand_total,created_at,updated_at) "
+            + "values(?,?,?,?,?,?,?,?,?,?)";
+    String timestamp = GaliPOS.getTimeStamp(1, null);
+    try {
+      PreparedStatement pstmt = dbConn.prepareStatement(sql);
+      pstmt.setLong(1, this.idTransaksi);
+      pstmt.setString(2, this.kode);
+      pstmt.setInt(3, this.idProduk);
+      pstmt.setDouble(4, this.jumlah);
+      pstmt.setDouble(5, this.harga);
+      pstmt.setDouble(6, this.total);
+      pstmt.setDouble(7, this.diskonItem);
+      pstmt.setDouble(8, this.grandTotal);
+      pstmt.setString(9, timestamp);
+      pstmt.setString(10, timestamp);
+      if (pstmt.executeUpdate() > 0) {
+        ResultSet rs = dbConn.createStatement().executeQuery("select it.* from item_transaksi it where it.kode='" + this.kode + "'");
+        if (rs.next()) {
+          itemTransaksi = rsProcessor(rs);
+        }
+      }
+    } catch (SQLException ex) {
+      Logger.getLogger(ItemTransaksi.class.getName()).log(Level.SEVERE, null, ex);
+    }
+    return itemTransaksi;
   }
 }
