@@ -41,11 +41,11 @@ public class GaliPOS {
       }
     }
 //    initData();
-//    FMasuk fMasuk = new FMasuk();
-//    fMasuk.setVisible(true);
-    sessionUser = User.getByUsername("admin", 0);
-    FMain fMain = new FMain();
-    fMain.setVisible(true);
+    FMasuk fMasuk = new FMasuk();
+    fMasuk.setVisible(true);
+//    sessionUser = User.getByUsername("admin", 0);
+//    FMain fMain = new FMain();
+//    fMain.setVisible(true);
   }
 
   public static String getTimeStamp(int mode, String timeString) {

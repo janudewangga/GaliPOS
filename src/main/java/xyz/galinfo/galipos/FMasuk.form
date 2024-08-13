@@ -83,6 +83,9 @@
           </Properties>
         </Component>
         <Component class="javax.swing.JTextField" name="txtMasukUsername">
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txtMasukUsernameActionPerformed"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel2">
           <Properties>
@@ -90,6 +93,9 @@
           </Properties>
         </Component>
         <Component class="javax.swing.JPasswordField" name="pwdMasukPassword">
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="pwdMasukPasswordActionPerformed"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JButton" name="jButton1">
           <Properties>

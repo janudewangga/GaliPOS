@@ -39,6 +39,13 @@ public class User {
   public User() {
   }
 
+  public User(int id, String nama, String alamat, String telepon) {
+    this.id = id;
+    this.nama = nama;
+    this.alamat = alamat;
+    this.telepon = telepon;
+  }
+
   public User(String foto, String nama, String jenisKelamin, String tanggalLahir, String alamat, String telepon, String email, String username, String password, String akses, String status) {
     this.foto = foto;
     this.nama = nama;

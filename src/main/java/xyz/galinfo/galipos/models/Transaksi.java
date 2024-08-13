@@ -38,6 +38,7 @@ public class Transaksi {
   private String status;
   private String createdAt;
   private String updatedAt;
+  private User buyer;
 
   public Transaksi(String tipe, String waktu, int idOperator, int idBuyer, int idSupplier, double total, double diskon, double grandTotal, double terbayar, String keterangan, String status) {
     this.tipe = tipe;
@@ -68,7 +69,7 @@ public class Transaksi {
     this.status = status;
   }
 
-  public Transaksi(long id, String kode, String waktu, int idOperator, int idBuyer, int idSupplier, double total, double diskon, double grandTotal, double terbayar, String keterangan, String status, String createdAt, String updatedAt) {
+  public Transaksi(long id, String kode, String waktu, int idOperator, int idBuyer, int idSupplier, double total, double diskon, double grandTotal, double terbayar, String keterangan, String status, String createdAt, String updatedAt, User buyer) {
     this.id = id;
     this.kode = kode;
     this.waktu = waktu;
@@ -83,6 +84,7 @@ public class Transaksi {
     this.status = status;
     this.createdAt = createdAt;
     this.updatedAt = updatedAt;
+    this.buyer = buyer;
   }
 
   public ArrayList<ItemTransaksi> getItems() {
@@ -268,7 +270,8 @@ public class Transaksi {
   public static Transaksi rsProcessor(ResultSet rs) {
     Transaksi transaksi = null;
     try {
-      transaksi = new Transaksi(rs.getLong("id"), rs.getString("kode"), rs.getString("waktu"), rs.getInt("id_operator"), rs.getInt("id_buyer"), rs.getInt("id_supplier"), rs.getDouble("total"), rs.getDouble("diskon"), rs.getDouble("grand_total"), rs.getDouble("terbayar"), rs.getString("keterangan"), rs.getString("status"), rs.getString("created_at"), rs.getString("updated_at"));
+      User buyer = null;
+      transaksi = new Transaksi(rs.getLong("id"), rs.getString("kode"), rs.getString("waktu"), rs.getInt("id_operator"), rs.getInt("id_buyer"), rs.getInt("id_supplier"), rs.getDouble("total"), rs.getDouble("diskon"), rs.getDouble("grand_total"), rs.getDouble("terbayar"), rs.getString("keterangan"), rs.getString("status"), rs.getString("created_at"), rs.getString("updated_at"), buyer);
     } catch (SQLException ex) {
       Logger.getLogger(Produk.class.getName()).log(Level.SEVERE, null, ex);
     }

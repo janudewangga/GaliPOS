@@ -479,6 +479,7 @@ private void loadTransaksi(String tanggal1, String tanggal2) {
       if (transaksi.save() != null) {
         JOptionPane.showMessageDialog(this, "Transaksi berhasil disimpan.", "Tambah penjualan", 1);
         resetForm();
+        loadTransaksi(GaliPOS.getTimeStamp(2, null), GaliPOS.getTimeStamp(2, null));
       } else {
         JOptionPane.showMessageDialog(this, "Transaksi gagal disimpan.", "Tambah penjualan", 0);
       }

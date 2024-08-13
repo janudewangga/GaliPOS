@@ -44,7 +44,19 @@ public class FMasuk extends javax.swing.JFrame {
 
     jLabel1.setText("Username");
 
+    txtMasukUsername.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        txtMasukUsernameActionPerformed(evt);
+      }
+    });
+
     jLabel2.setText("Password");
+
+    pwdMasukPassword.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        pwdMasukPasswordActionPerformed(evt);
+      }
+    });
 
     jButton1.setText("Masuk");
     jButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -105,6 +117,16 @@ public class FMasuk extends javax.swing.JFrame {
     // TODO add your handling code here:
     actionMasuk();
   }//GEN-LAST:event_jButton1ActionPerformed
+
+  private void txtMasukUsernameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtMasukUsernameActionPerformed
+    // TODO add your handling code here:
+    jButton1.doClick();
+  }//GEN-LAST:event_txtMasukUsernameActionPerformed
+
+  private void pwdMasukPasswordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pwdMasukPasswordActionPerformed
+    // TODO add your handling code here:
+    jButton1.doClick();
+  }//GEN-LAST:event_pwdMasukPasswordActionPerformed
   private void actionMasuk() {
     String username = txtMasukUsername.getText();
     char[] password = pwdMasukPassword.getPassword();
