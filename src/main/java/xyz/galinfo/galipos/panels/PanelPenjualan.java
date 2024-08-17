@@ -4,7 +4,9 @@
  */
 package xyz.galinfo.galipos.panels;
 
+import com.raven.datechooser.DateChooser;
 import java.awt.Color;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
@@ -24,8 +26,13 @@ public class PanelPenjualan extends javax.swing.JPanel {
   /**
    * Creates new form PanelDashboard
    */
+  private DateChooser chDate = new DateChooser();
+
   public PanelPenjualan() {
     initComponents();
+    chDate.setTextField(daterange);
+    chDate.setDateSelectionMode(DateChooser.DateSelectionMode.BETWEEN_DATE_SELECTED);
+    chDate.setDateFormat(new SimpleDateFormat("yyyy-MM-dd"));
     txtPenjualanKodeProduk.requestFocus();
     ArrayList<CmbItem> cmbItems = new ArrayList<>();
     ArrayList<User> users = User.getActiveBuyers();
@@ -77,6 +84,7 @@ public class PanelPenjualan extends javax.swing.JPanel {
     jButton4 = new javax.swing.JButton();
     jScrollPane2 = new javax.swing.JScrollPane();
     jTable2 = new javax.swing.JTable();
+    daterange = new javax.swing.JTextField();
 
     jPanel1.setBackground(new java.awt.Color(0, 102, 153));
 
@@ -306,7 +314,8 @@ public class PanelPenjualan extends javax.swing.JPanel {
               .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 528, Short.MAX_VALUE)
               .addGroup(layout.createSequentialGroup()
                 .addComponent(jButton4)
-                .addGap(0, 0, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(daterange, javax.swing.GroupLayout.PREFERRED_SIZE, 258, javax.swing.GroupLayout.PREFERRED_SIZE))
               .addComponent(jScrollPane2))
             .addContainerGap())))
     );
@@ -322,7 +331,9 @@ public class PanelPenjualan extends javax.swing.JPanel {
             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
             .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-            .addComponent(jButton4)
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+              .addComponent(jButton4)
+              .addComponent(daterange, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
             .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
             .addContainerGap())))
@@ -578,6 +589,7 @@ private void loadTransaksi(String tanggal1, String tanggal2) {
   }
   // Variables declaration - do not modify//GEN-BEGIN:variables
   private javax.swing.JComboBox<CmbItem> cmbPenjualanBuyer;
+  private javax.swing.JTextField daterange;
   private javax.swing.JButton jButton1;
   private javax.swing.JButton jButton2;
   private javax.swing.JButton jButton3;
