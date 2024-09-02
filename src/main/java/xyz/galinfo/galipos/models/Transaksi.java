@@ -39,6 +39,15 @@ public class Transaksi {
   private String createdAt;
   private String updatedAt;
   private User buyer;
+  private String buyerNama;
+
+  public String getBuyerNama() {
+    return buyerNama;
+  }
+
+  public void setBuyerNama(String buyerNama) {
+    this.buyerNama = buyerNama;
+  }
 
   public Transaksi(String tipe, String waktu, int idOperator, int idBuyer, int idSupplier, double total, double diskon, double grandTotal, double terbayar, String keterangan, String status) {
     this.tipe = tipe;
@@ -69,7 +78,7 @@ public class Transaksi {
     this.status = status;
   }
 
-  public Transaksi(long id, String kode, String waktu, int idOperator, int idBuyer, int idSupplier, double total, double diskon, double grandTotal, double terbayar, String keterangan, String status, String createdAt, String updatedAt, User buyer) {
+  public Transaksi(long id, String kode, String waktu, int idOperator, int idBuyer, int idSupplier, double total, double diskon, double grandTotal, double terbayar, String keterangan, String status, String createdAt, String updatedAt, String buyerNama) {
     this.id = id;
     this.kode = kode;
     this.waktu = waktu;
@@ -84,7 +93,7 @@ public class Transaksi {
     this.status = status;
     this.createdAt = createdAt;
     this.updatedAt = updatedAt;
-    this.buyer = buyer;
+    this.buyerNama = buyerNama;
   }
 
   public ArrayList<ItemTransaksi> getItems() {
@@ -223,7 +232,7 @@ public class Transaksi {
   public static ArrayList<Transaksi> getByTanggal(String tanggal1, String tanggal2) {
     ArrayList<Transaksi> transaksis = new ArrayList<>();
     Database db = new Database();
-    String sql = "select tr.* from transaksi tr where tr.waktu>='" + tanggal1 + " 00:00:00' and tr.waktu<='" + tanggal2 + " 23:59:59' order by tr.waktu asc";
+    String sql = "select tr.*,buyer.nama as buyer_nama from transaksi tr join user buyer on tr.id_buyer=buyer.id where tr.waktu>='" + tanggal1 + " 00:00:00' and tr.waktu<='" + tanggal2 + " 23:59:59' order by tr.waktu asc";
     try {
       ResultSet rs = db.connection.createStatement().executeQuery(sql);
       while (rs.next()) {
@@ -271,7 +280,7 @@ public class Transaksi {
     Transaksi transaksi = null;
     try {
       User buyer = null;
-      transaksi = new Transaksi(rs.getLong("id"), rs.getString("kode"), rs.getString("waktu"), rs.getInt("id_operator"), rs.getInt("id_buyer"), rs.getInt("id_supplier"), rs.getDouble("total"), rs.getDouble("diskon"), rs.getDouble("grand_total"), rs.getDouble("terbayar"), rs.getString("keterangan"), rs.getString("status"), rs.getString("created_at"), rs.getString("updated_at"), buyer);
+      transaksi = new Transaksi(rs.getLong("id"), rs.getString("kode"), rs.getString("waktu"), rs.getInt("id_operator"), rs.getInt("id_buyer"), rs.getInt("id_supplier"), rs.getDouble("total"), rs.getDouble("diskon"), rs.getDouble("grand_total"), rs.getDouble("terbayar"), rs.getString("keterangan"), rs.getString("status"), rs.getString("created_at"), rs.getString("updated_at"), rs.getString("buyer_nama"));
     } catch (SQLException ex) {
       Logger.getLogger(Produk.class.getName()).log(Level.SEVERE, null, ex);
     }

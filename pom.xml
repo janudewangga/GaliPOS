@@ -46,6 +46,17 @@
             <artifactId>artifact.id</artifactId>
             <version>1.0</version>
         </dependency>
+        <dependency>
+            <groupId>com.formdev</groupId>
+            <artifactId>flatlaf</artifactId>
+            <version>3.4.1</version>
+        </dependency>
+        <dependency>
+            <groupId>sljd</groupId>
+            <artifactId>lkajslkasj</artifactId>
+            <version>lkajslkaj</version>
+            <type>sddf</type>
+        </dependency>
     </dependencies>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

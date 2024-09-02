@@ -3,6 +3,9 @@
  */
 package xyz.galinfo.galipos;
 
+import com.formdev.flatlaf.FlatIntelliJLaf;
+import com.formdev.flatlaf.FlatLaf;
+import com.formdev.flatlaf.FlatLightLaf;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.logging.Level;
@@ -25,20 +28,25 @@ public class GaliPOS {
   public static User sessionUser;
 
   public static void main(String[] args) {
-//    try {
+    try {
+      //    try {
 //      UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 //    } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
 //      Logger.getLogger(GaliPOS.class.getName()).log(Level.SEVERE, null, ex);
 //    }
-    for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-      if ("Nimbus".equals(info.getName())) {
-        try {
-          UIManager.setLookAndFeel(info.getClassName());
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
-          Logger.getLogger(GaliPOS.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        break;
-      }
+//    for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+//      if ("Nimbus".equals(info.getName())) {
+//        try {
+//          UIManager.setLookAndFeel(info.getClassName());
+//        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
+//          Logger.getLogger(GaliPOS.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+//        break;
+//      }
+//    }
+      UIManager.setLookAndFeel(new FlatIntelliJLaf());
+    } catch (UnsupportedLookAndFeelException ex) {
+      Logger.getLogger(GaliPOS.class.getName()).log(Level.SEVERE, null, ex);
     }
 //    initData();
     FMasuk fMasuk = new FMasuk();
